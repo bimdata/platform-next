@@ -34,3 +34,9 @@ cypress.env.json
 /tests/e2e/downloads/
 /tests/e2e/screenshots/
 /tests/e2e/videos/
+
+# Playwright output files
+/test-results/
+/playwright-report/
+/playwright/.auth/
+/playwright/.cache/

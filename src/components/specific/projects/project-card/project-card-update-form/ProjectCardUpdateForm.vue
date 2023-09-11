@@ -15,6 +15,7 @@
     <BIMDataInput
       ref="nameInput"
       data-test-id="input-update-name"
+      data-testid="input-update-name"
       class="project-card-update-form__input"
       :placeholder="$t('t.name')"
       v-model="projectName"
@@ -25,6 +26,7 @@
     />
     <BIMDataButton
       data-test-id="btn-submit-update"
+      data-testid="btn-submit-update"
       class="project-card-update-form__submit-btn"
       color="primary"
       fill

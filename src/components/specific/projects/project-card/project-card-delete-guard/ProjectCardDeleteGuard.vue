@@ -17,6 +17,7 @@
     </div>
     <BIMDataButton
       data-test-id="btn-submit-delete"
+      data-testid="btn-submit-delete"
       class="project-card-delete-guard__submit-btn"
       color="high"
       fill

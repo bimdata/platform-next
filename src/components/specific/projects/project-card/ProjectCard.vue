@@ -3,6 +3,7 @@
     v-if="visible"
     class="project-card"
     data-test-id="project-card"
+    data-testid="project-card"
     :data-test-param="project.id"
     :flipped="showMenu"
     v-click-away="closeMenu"

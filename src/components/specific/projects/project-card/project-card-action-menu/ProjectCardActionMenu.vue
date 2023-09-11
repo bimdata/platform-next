@@ -49,6 +49,7 @@
           <BIMDataButton
             v-if="isProjectAdmin(project)"
             data-test-id="btn-open-update"
+            data-testid="btn-open-update"
             ghost
             squared
             @click="openUpdateForm"
@@ -58,6 +59,7 @@
           <BIMDataButton
             v-if="isProjectAdmin(project)"
             data-test-id="btn-open-delete"
+            data-testid="btn-open-delete"
             color="high"
             ghost
             squared

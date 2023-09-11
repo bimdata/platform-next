@@ -2,6 +2,7 @@
   <div
     class="project-creation-card"
     data-test-id="project-creation-card"
+    data-testid="project-creation-card"
     v-click-away="closeCreationForm"
   >
     <transition name="fade" mode="out-in">
@@ -25,6 +26,7 @@
         <BIMDataInput
           ref="nameInput"
           data-test-id="input-create-name"
+          data-testid="input-create-name"
           class="project-creation-card__form__input"
           :placeholder="$t('t.name')"
           v-model="newProject.name"
@@ -35,6 +37,7 @@
         />
         <BIMDataButton
           data-test-id="btn-submit-create"
+          data-testid="btn-submit-create"
           class="project-creation-card__form__btn-submit"
           fill
           radius
@@ -49,6 +52,7 @@
         v-else
         data-guide="btn-create-project"
         data-test-id="btn-open-create"
+        data-testid="btn-open-create"
         class="project-creation-card__btn-open"
         @click="openCreationForm"
       >

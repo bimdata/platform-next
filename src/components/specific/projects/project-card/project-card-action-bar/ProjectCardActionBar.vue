@@ -15,6 +15,7 @@
     <BIMDataButton
       v-if="actionMenu"
       data-test-id="btn-open-menu"
+      data-testid="btn-open-menu"
       class="project-card-action-bar__btn action-menu"
       color="default"
       ripple
