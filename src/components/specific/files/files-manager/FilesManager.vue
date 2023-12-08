@@ -142,7 +142,7 @@
           </BIMDataTooltip>
         </div>
 
-        <div class="files-manager__actions end">
+        <div class="files-manager__actions end justify-between">
           <BIMDataSearch
             class="files-manager__actions__input-search"
             :width="isMD ? '200px' : isLG ? '300px' : '400px'"
@@ -150,32 +150,59 @@
             v-model="searchText"
             clear
           />
-          <BIMDataTooltip
-            class="files-manager__actions__visa-tooltip"
-            position="left"
-            color="high"
-            :disabled="visasCounter > 0 || createdVisas.length > 0"
-            :text="$t('Visa.noVisa')"
-          >
+          <div class="flex">
             <BIMDataButton
-              :disabled="createdVisas.length < 1 && visasCounter < 1"
-              class="files-manager__actions__visa"
-              data-test-id="btn-open-visa-list"
+              class="files-manager__actions__naming-convention m-r-6"
+              data-test-id="btn-open-naming-convention-list"
               color="primary"
               fill
               radius
-              @click="openVisaManager"
+              @click="openNamingConventionManager"
             >
-              <span class="files-manager__actions__visa__content">
-                <template v-if="visasCounter > 0">
-                  <div class="files-manager__actions__visa__content__counter">
-                    <span>{{ visasCounter }}</span>
-                  </div>
-                </template>
-                {{ $t("Visa.button") }}
+              <BIMDataIconVisa
+                size="xs"
+                fill
+                color="white"
+                margin="0 6px 0 0"
+              />
+              <span class="files-manager__actions__naming-convention__content">
+                Règles de nommage
               </span>
             </BIMDataButton>
-          </BIMDataTooltip>
+            <BIMDataTooltip
+              class="files-manager__actions__visa-tooltip"
+              position="bottom"
+              color="high"
+              maxWidth="140px"
+              :disabled="visasCounter > 0 || createdVisas.length > 0"
+              :text="$t('Visa.noVisa')"
+            >
+              <BIMDataButton
+                :disabled="createdVisas.length < 1 && visasCounter < 1"
+                class="files-manager__actions__visa"
+                data-test-id="btn-open-visa-list"
+                color="primary"
+                fill
+                radius
+                @click="openVisaManager"
+              >
+                <BIMDataIconVisa
+                  size="xs"
+                  fill
+                  color="white"
+                  margin="0 6px 0 0"
+                />
+                <span class="files-manager__actions__visa__content">
+                  <template v-if="visasCounter > 0">
+                    <div class="files-manager__actions__visa__content__counter">
+                      <span>{{ visasCounter }}</span>
+                    </div>
+                  </template>
+                  {{ $t("Visa.button") }}
+                </span>
+              </BIMDataButton>
+            </BIMDataTooltip>
+          </div>
         </div>
 
         <FileTree
@@ -222,6 +249,7 @@
             @row-drop="({ event, data }) => uploadFiles(event, data)"
             @selection-changed="setSelection"
             @manage-access="openAccessManager"
+            @open-naming-convention="openNamingConvention"
             @open-visa-manager="openVisaManager"
             @open-tag-manager="openTagManager"
             @open-versioning-manager="openVersioningManager"
@@ -266,6 +294,10 @@
               @file-uploaded="$emit('file-uploaded')"
               @close="closeVersioningManager"
             />
+            <ManagingNamingConvention
+              v-if="showNamingConvention"
+              @close="closeNamingConvention"
+            />
           </div>
         </transition>
 
@@ -289,6 +321,10 @@
         />
       </template>
 
+      <AppSidePanelContent title="Convention de nommage">
+        <NamingConvention />
+      </AppSidePanelContent>
+
       <AppModalContent v-if="projectsToUpload">
         <FileTreePreviewModal
           :projectsToUpload="projectsToUpload"
@@ -305,6 +341,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useAppModal } from "../../app/app-modal/app-modal.js";
 import { useAppNotification } from "../../app/app-notification/app-notification.js";
+import { useAppSidePanel } from "../../app/app-side-panel/app-side-panel.js";
 import { useListFilter } from "../../../../composables/list-filter.js";
 import {
   useStandardBreakpoints,
@@ -325,6 +362,7 @@ import { fileUploadInput } from "../../../../utils/upload.js";
 
 // Components
 import AppModalContent from "../../app/app-modal/AppModalContent.vue";
+import AppSidePanelContent from "../../app/app-side-panel/AppSidePanelContent.vue";
 import DocumentViewer from "../document-viewer/DocumentViewer.vue";
 import FilesActionBar from "./files-action-bar/FilesActionBar.vue";
 import FilesDeleteModal from "./files-delete-modal/FilesDeleteModal.vue";
@@ -339,10 +377,13 @@ import TagsMain from "../../tags/tags-main/TagsMain.vue";
 import VersioningMain from "../../versioning/versioning-main/VersioningMain.vue";
 import VisaMain from "../../visa/visa-main/VisaMain.vue";
 import FileDragAndDropModal from "./file-drag-and-drop-modal/FileDragAndDropModal.vue";
+import NamingConvention from "../../naming-convention/NamingConvention.vue";
+import ManagingNamingConvention from "../../naming-convention/managing-naming-convention/ManagingNamingConvention.vue";
 
 export default {
   components: {
     AppModalContent,
+    AppSidePanelContent,
     FilesActionBar,
     FilesDeleteModal,
     FilesManagerOnboarding,
@@ -351,6 +392,8 @@ export default {
     FileTreePreviewModal,
     FolderAccessManager,
     FolderCreationButton,
+    NamingConvention,
+    ManagingNamingConvention,
     TagsMain,
     VersioningMain,
     VisaMain
@@ -380,6 +423,7 @@ export default {
     const { pushNotification } = useAppNotification();
     const { currentSpace } = useSpaces();
     const { openModal, closeModal } = useAppModal();
+    const { openSidePanel } = useAppSidePanel();
 
     const { fetchProjectFolderTreeSerializers } = useProjects();
 
@@ -539,9 +583,10 @@ export default {
     const showAccessManager = ref(false);
     const showVisaManager = ref(false);
     const showTagManager = ref(false);
+    const showNamingConvention = ref(false);
     const folderToManage = ref(null);
     const fileToManage = ref(null);
-    const currentVisa = ref(null)
+    const currentVisa = ref(null);
 
     let stopCurrentFilesWatcher;
     const openAccessManager = folder => {
@@ -550,6 +595,7 @@ export default {
       showVersioningManager.value = false;
       showVisaManager.value = false;
       showTagManager.value = false;
+      showNamingConvention.value = false;
       showSidePanel.value = true;
       // Watch for current files changes in order to update
       // folder data in access manager accordingly
@@ -574,6 +620,19 @@ export default {
       }, 100);
     };
 
+    const openNamingConvention = file => {
+      if (file.name) {
+        showSidePanel.value = true;
+        showNamingConvention.value = true;
+      }
+    };
+    const closeNamingConvention = () => {
+      showSidePanel.value = false;
+      setTimeout(() => {
+        showNamingConvention.value = false;
+      }, 100);
+    };
+
     const openVisaManager = file => {
       if (file?.file_name) {
         fileToManage.value = file;
@@ -582,6 +641,7 @@ export default {
       }
       showVisaManager.value = true;
       showVersioningManager.value = false;
+      showNamingConvention.value = false;
       showAccessManager.value = false;
       showTagManager.value = false;
       showSidePanel.value = true;
@@ -615,6 +675,7 @@ export default {
       if (file.file_name) {
         fileToManage.value = file;
         showVersioningManager.value = true;
+        showNamingConvention.value = false;
         showAccessManager.value = false;
         showVisaManager.value = false;
         showSidePanel.value = true;
@@ -789,6 +850,7 @@ export default {
       showTagManager,
       allTags,
       showVersioningManager,
+      showNamingConvention,
       shouldSubscribe,
       currentSpace,
       projectsTree,
@@ -807,6 +869,8 @@ export default {
       downloadFiles,
       moveFiles,
       openAccessManager,
+      openNamingConvention,
+      closeNamingConvention,
       onFileSelected,
       openDeleteModal,
       setSelection,
@@ -824,6 +888,7 @@ export default {
       isFullTotal,
       fileUploadInput,
       openSubscriptionModal,
+      openNamingConventionManager: openSidePanel,
       // Responsive breakpoints
       ...useStandardBreakpoints(),
       isMidXL,

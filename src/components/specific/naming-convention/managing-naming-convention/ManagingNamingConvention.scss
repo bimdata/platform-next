@@ -1,0 +1,25 @@
+.managing-naming-convention {
+  height: 100%;
+  &__header {
+  }
+  &__content {
+    height: calc(100% - 32px - 12px);
+    &--title {
+      font-size: 14px;
+    }
+    &__empty {
+      height: calc(100% - 32px - 32px - 12px);
+      gap: 12px;
+      h5 {
+        margin: 0;
+        color: var(--color-primary);
+        font-size: 14px;
+      }
+      p {
+        margin: 0 auto;
+        width: 60%;
+        text-align: center;
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+.add-element {
+  padding: 6px;
+  margin-bottom: calc(var(--spacing-unit) / 2);
+  display: grid;
+  grid-template-columns: 110px 174px 32px;
+  gap: 12px;
+  background-color: var(--color-white);
+  border-radius: 3px;
+  &__text {
+    span {
+      font-size: 12px;
+    }
+  }
+  &__values {
+    &__input {
+      gap: calc(var(--spacing-unit) / 2);
+      input {
+        height: 31px;
+        width: 66px;
+        border: none;
+        border: 1px solid #d8d8d8;
+        border-radius: 3px;
+      }
+      .separator {
+        width: calc(var(--spacing-unit) / 2);
+        height: 2px;
+        background-color: var(--color-granite);
+      }
+    }
+    &__list {
+      height: 31px;
+    }
+  }
+}

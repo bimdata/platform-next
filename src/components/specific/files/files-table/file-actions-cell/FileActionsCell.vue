@@ -118,6 +118,7 @@ export default {
     "delete",
     "download",
     "manage-access",
+    "open-naming-convention",
     "open-versioning-manager",
     "open-visa-manager",
     "update",
@@ -159,7 +160,10 @@ export default {
             key: 3,
             text: "FileActionsCell.createModelButtonText",
             component: SetAsModelIcon,
-            disabled: props.project.isGuest || !props.project.isAdmin && props.file.user_permission < FILE_PERMISSION.READ_WRITE,
+            disabled:
+              props.project.isGuest ||
+              (!props.project.isAdmin &&
+                props.file.user_permission < FILE_PERMISSION.READ_WRITE),
             action: () => onClick("create-model")
           });
         } else {
@@ -177,15 +181,16 @@ export default {
         action: () => onClick("update"),
         icon: "edit",
         disabled:
-          props.project.isGuest || !props.project.isAdmin &&
-          props.file.user_permission < FILE_PERMISSION.READ_WRITE
+          props.project.isGuest ||
+          (!props.project.isAdmin &&
+            props.file.user_permission < FILE_PERMISSION.READ_WRITE)
       });
 
       menuItems.value.push({
         key: 6,
         text: "t.download",
         action: () => onClick("download"),
-        icon: "download",
+        icon: "download"
       });
 
       if (isFolder(props.file) && props.project.isAdmin) {
@@ -193,6 +198,12 @@ export default {
           key: 7,
           text: "FileActionsCell.manageAccessButtonText",
           action: () => onClick("manage-access"),
+          icon: "key"
+        });
+        menuItems.value.push({
+          key: 8,
+          text: "Convention de nommage",
+          action: () => onClick("open-naming-convention"),
           icon: "key",
           divider: true
         });
@@ -200,21 +211,21 @@ export default {
 
       if (!isFolder(props.file) && hasAdminPerm(props.project, props.file)) {
         menuItems.value.push({
-          key: 8,
+          key: 9,
           text: "FileActionsCell.visaButtonText",
           icon: "visa",
           action: () => onClick("open-visa-manager"),
           dataTestId: "btn-open-visa-manager"
         });
         menuItems.value.push({
-          key: 9,
+          key: 10,
           text: "FileActionsCell.addTagsButtonText",
           icon: "tag",
           action: () => onClick("open-tag-manager"),
           dataTestId: "btn-open-tag-manager"
         });
         menuItems.value.push({
-          key: 10,
+          key: 11,
           text: "FileActionsCell.versioningButtonText",
           icon: "versioning",
           action: () => onClick("open-versioning-manager"),
@@ -224,7 +235,7 @@ export default {
       }
 
       menuItems.value.push({
-        key: 11,
+        key: 12,
         text: "t.delete",
         action: () => onClick("delete"),
         color: "high",
@@ -232,8 +243,9 @@ export default {
         dataTestId: "btn-delete-doc",
         icon: "delete",
         disabled:
-          props.project.isGuest || !props.project.isAdmin &&
-          props.file.user_permission < FILE_PERMISSION.READ_WRITE
+          props.project.isGuest ||
+          (!props.project.isAdmin &&
+            props.file.user_permission < FILE_PERMISSION.READ_WRITE)
       });
 
       nextTick(() => {
